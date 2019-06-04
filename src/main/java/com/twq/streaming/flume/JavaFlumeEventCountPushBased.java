@@ -14,6 +14,29 @@ import org.apache.spark.streaming.flume.SparkFlumeEvent;
  * 1、在slave1(必须要有spark的worker进程在)上启动一个flume agent
  * bin/flume-ng agent -n a1 -c conf -f conf/flume-conf.properties
  *
+ * # Name the components on this agent
+ * agent1.sources = r1
+ * agent1.sinks = k1
+ * agent1.channels = c1
+ *
+ * # Describe/configure the source
+ * agent1.sources.r1.type = netcat
+ * agent1.sources.r1.bind = localhost
+ * agent1.sources.r1.port = 44445
+ *
+ * # Describe the sink
+ * agent1.sinks.k1.type = logger
+ *
+ * # Use a channel that buffers events in memory
+ * agent1.channels.c1.type = memory
+ * agent1.channels.c1.capacity = 1000
+ * agent1.channels.c1.transactionCapacity = 100
+ *
+ * # Bind the source and sink to the channel
+ * agent1.sources.r1.channels = c1
+ * agent1.sinks.k1.channel = c1
+ * 
+ *
  * 2、启动Spark Streaming应用
  spark-submit --class com.twq.streaming.flume.JavaFlumeEventCountPushBased \
  --master spark://master:7077 \
